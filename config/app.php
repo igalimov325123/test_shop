@@ -3,6 +3,14 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
+    /*
+    |-------------------------------------------
+    | Current API Version
+    |-------------------------------------------
+    | That is the default API version of your API (Last version).
+    | The idea is that if there is no version when calling the API, it  | will be used this one.
+    */
+    'api_latest'  => '1',
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +90,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +116,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'ru_RU',
 
     /*
     |--------------------------------------------------------------------------
@@ -176,6 +184,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
 
     ],
 
