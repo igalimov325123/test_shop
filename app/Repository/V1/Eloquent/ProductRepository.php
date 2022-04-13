@@ -23,14 +23,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getProductList(array $filter_data): AnonymousResourceCollection
     {
 
-//        'count'
-//        'search_product_name'
-//        'category_id'
-//        'search_category_name'
-//        'search_price_from'
-//        'search_price_to'
-//        'show_published'
-//        'show_deleted'
         $products = Product::with('categories');
 
 
