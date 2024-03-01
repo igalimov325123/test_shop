@@ -44,29 +44,28 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        $product_data = $request->validated();
-        if($request->hasFile('image')){
-            $product_data['image'] = $this->imageUploaderService->saveImageAndGetPath($request->file('image'));
-        }
+        try {
+            $product_data = $request->validated();
 
-        $created_product =  $this->productRepository->createProduct($product_data);
+            if($request->hasFile('image')){
+                $product_data['image'] = $this->imageUploaderService->saveImageAndGetPath($request->file('image'));
+            }
 
-        if(!$created_product){
+            return $this->productRepository->createProduct($product_data);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'При создании продукта возникла ошибка'
+                'message' => $e->getMessage()
             ], 400);
         }
-
-        return $created_product;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return ProductResource
      */
-    public function show($id)
+    public function show(int $id)
     {
         return $this->productRepository->getProductById($id);
     }
@@ -78,23 +77,21 @@ class ProductController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse|ProductResource
      */
-    public function update($id, ProductUpdateRequest $request)
+    public function update(int $id, ProductUpdateRequest $request)
     {
-        $product_data = $request->validated();
+        try {
+            $product_data = $request->validated();
 
-        if($request->hasFile('image')){
-            $product_data['image'] = $this->imageUploaderService->saveImageAndGetPath($request->file('image'));
-        }
+            if($request->hasFile('image')){
+                $product_data['image'] = $this->imageUploaderService->saveImageAndGetPath($request->file('image'));
+            }
 
-        $created_product =  $this->productRepository->updateProduct($id, $product_data);
-
-        if(!$created_product){
+            return $this->productRepository->updateProduct($id, $product_data);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'При обновлении продукта возникла ошибка'
-            ], 400);
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
-
-        return $created_product;
     }
 
     /**
@@ -103,19 +100,18 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
-        $product = Product::find($id);
-        if(empty($product)){
+        try {
+            $this->productRepository->delete($id);
+
             return response()->json([
-                'error'=> 'Товар не существует в системе'
-            ], 400);
+                'status' => true
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ошибка при удалении'
+            ], $e->getCode());
         }
-
-        $this->productRepository->delete($id);
-
-        return response()->json([
-            'status' => true
-        ], 200);
     }
 }

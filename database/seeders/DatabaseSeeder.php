@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
          Category::factory(10)->create();
          Product::factory(10)->create()->each(function ($product) {
              $categories = Category::find(rand(1, Category::count()-1));

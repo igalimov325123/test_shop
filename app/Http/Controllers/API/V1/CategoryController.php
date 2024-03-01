@@ -31,21 +31,18 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      *
      * @param CategoryStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse|ProductResource
      */
     public function store(CategoryStoreRequest $request)
     {
-        $category_data = $request->validated();
+        try {
+            $category_data = $request->validated();
 
-        $created_category =  $this->categoryRepository->createCategory($category_data);
-
-        if(!$created_category){
+            return $this->categoryRepository->createCategory($category_data);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'При создании категории возникла ошибка'
+                'message' => $e->getMessage()
             ], 400);
         }
-
-        return $created_category;
     }
 
     /**
@@ -57,21 +54,14 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         try{
-            $category = Category::find($id);
-            if(empty($category)){
-                return response()->json([
-                    'error'=> 'Категория не существует в системе'
-                ], 400);
-            }
             $this->categoryRepository->delete($id);
 
             return response()->json([
-                'status'=> true
+                'message' => 'Категория удалена'
             ], 200);
-
         } catch (\Exception $e){
             return response()->json([
-                'error'=> 'Данная категория привязана к товару'
+                'massage' => 'Ошибка при удалении'
             ], 400);
         }
     }

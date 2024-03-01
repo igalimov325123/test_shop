@@ -23,8 +23,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getProductList(array $filter_data): AnonymousResourceCollection
     {
 
-        $products = Product::with('categories');
-
+        $products = $this->model->with('categories');
 
         if(isset($filter_data['search_product_name'])){
             $products->where('name', 'like', '%'.$filter_data['search_product_name'].'%');
@@ -58,8 +57,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             $products->withTrashed();
         }
 
-
-
         return ProductResource::collection($products->paginate($filter_data['count'] ?? 15));
     }
 
@@ -73,64 +70,40 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     /**
      * @inheritDoc
      */
-    public function createProduct(array $data): ProductResource|bool {
-        try {
-            DB::beginTransaction();
-                $product = new Product();
-                $product->name = $data['name'];
-                $product->description = $data['description'];
-                $product->price = $data['price'];
-                $product->is_published = $data['is_published'] ?? false;
-                $product->published_at = $data['is_published'] ? now() : null;
-                $product->image = $data['image'] ?? null;
+    public function createProduct(array $data): ProductResource {
+        DB::beginTransaction();
+            $product = new Product();
+            $product->name = $data['name'];
+            $product->description = $data['description'];
+            $product->price = $data['price'];
+            $product->is_published = $data['is_published'] ?? false;
+            $product->published_at = $data['is_published'] ? now() : null;
+            $product->image = $data['image'] ?? null;
 
-                $product->save();
+            $product->save();
 
-                $categories = Category::findOrFail($data['categories']);
-                if(count($categories) !== count($data['categories'])){
-                    return false;
-                }
+            $product->categories()->saveMany($data['categories']);
+        DB::commit();
 
-                $product->categories()->saveMany($categories);
-            DB::commit();
-
-            return new ProductResource($product);
-        }
-        catch(\Exception $e){
-            DB::rollback();
-            return false;
-        }
+        return new ProductResource($product);
     }
 
     /**
      * @inheritDoc
      */
-    public function updateProduct($product_id, array $data): ProductResource|bool {
-        try {
-            DB::beginTransaction();
-            $categories_ids = $data['categories'];
-            unset($data['categories']);
-
+    public function updateProduct($product_id, array $data): ProductResource {
+        DB::beginTransaction();
             $data['published_at'] = $data['is_published'] ? now() : null;
 
-            $update_product = Product::whereId($product_id)->update($data);
-            $updated_product = Product::findOrFail($product_id);
+            $updated_product = $this->find($product_id);
 
-            $categories = Category::findOrFail($categories_ids);
+            $updated_product->fill($data);
+            $updated_product->categories()->sync($data['categories']);
 
-            if(count($categories) !== count($categories_ids)){
-                return false;
-            }
+            $updated_product->save();
+        DB::commit();
 
-            $updated_product->categories()->sync($categories);
-            DB::commit();
-
-            return new ProductResource($updated_product);
-        }
-        catch(\Exception $e){
-            DB::rollback();
-            return false;
-        }
+        return new ProductResource($updated_product);
     }
 
 }

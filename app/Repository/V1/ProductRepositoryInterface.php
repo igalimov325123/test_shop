@@ -19,28 +19,28 @@ interface ProductRepositoryInterface
     /**
      * Get product by id
      *
-     * @param $product_id
+     * @param int $product_id
      * @return ProductResource
      */
-    public function getProductById($product_id): ProductResource;
+    public function getProductById(int $product_id): ProductResource;
 
     /**
      * Create product from valid data
      *
      * @param array $data
-     * @return bool|ProductResource
+     * @return ProductResource
      */
-    public function createProduct(array $data): ProductResource|bool;
+    public function createProduct(array $data): ProductResource;
 
     /**
      *
      * Update product from valid data
      *
-     * @param $product_id
+     * @param int $product_id
      * @param array $data
-     * @return bool|ProductResource
+     * @return ProductResource
      */
-    public function updateProduct($product_id, array $data): ProductResource|bool;
+    public function updateProduct(int $product_id, array $data): ProductResource;
 
     /**
      * Soft delete product by ID

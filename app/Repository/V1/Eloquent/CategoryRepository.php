@@ -11,7 +11,7 @@ use App\Models\Product;
 class CategoryRepository extends BaseRepository implements CategoryRepositoryInterface
 {
 
-    public function __construct(Product $model)
+    public function __construct(Category $model)
     {
         parent::__construct($model);
     }
@@ -27,10 +27,10 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     /**
      * @inheritDoc
      */
-    public function createCategory(array $category_data): CategoryResource|bool
+    public function createCategory(array $category_data): CategoryResource
     {
         $category = Category::create([
-            'name' => $category_data['name'],
+            'name' => $category_data['name']
         ]);
 
         return new CategoryResource($category);

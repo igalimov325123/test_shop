@@ -20,5 +20,5 @@ interface CategoryRepositoryInterface
      * @param array $category_data
      * @return CategoryResource
      */
-    public function createCategory(array $category_data): CategoryResource|bool;
+    public function createCategory(array $category_data): CategoryResource;
 }

@@ -23,14 +23,26 @@ class BaseRepository implements EloquentRepositoryInterface
         $this->model = $model;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function find($id): ?Model
     {
         return $this->model->findOrFail($id);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete(int $id): bool
     {
-        return $this->find($id)->delete();
+        $item = $this->model->find($id);
+
+        if(empty($item)){
+            throw new \Exception('Запись не найдена', 404);
+        }
+
+        return $item->delete();
     }
 
 }

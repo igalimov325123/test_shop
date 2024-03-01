@@ -11,11 +11,29 @@
 
 - [Текст задачи находится здесь](https://docs.google.com/document/d/1oSTzvjFFYXWqMoCtP5yj0o0cqYAGk-xTlYDuw7XitRY/edit).
 
+Развертывание проекта:
+<pre>
+composer install
+</pre>
+Необходимо создать базу данных и создать файл .env с заполнением данных для подключения к базе данных
+<pre>
+php artisan optimize 
+php artisan key:generate
+php artisan optimize
+</pre>
+
+Миграция таблиц и заполнение тестовыми данными
+<pre>
+php artisan migrate
+php artisan db:seed
+</pre>
+##
 Примечания:
 
--Для работы в тестовом режиме имеются сидеры с фабриками для товаров и категорий;
-
--Для товаров доступна необязательная загрузка изображений. Для работы необходимо создать ссылку в <i>public</i> на папку <i>storage</i> коммандой php artisan storage:link;
+-Для товаров доступна необязательная загрузка изображений. Для работы необходимо создать ссылку в <i>public</i> на папку <i>storage</i> коммандой:
+<pre>
+php artisan storage:link
+</pre>
 
 Описание запросов:
 
